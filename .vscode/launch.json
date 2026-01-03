@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug Android App",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 5005,
+      "timeout": 30000
+    },
+    {
+      "type": "gradle",
+      "name": "Run Gradle Task",
+      "request": "launch",
+      "tasks": ["assembleDebug"]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "recommendations": [
+    // Java 核心支持
+    "redhat.java",
+    "vscjava.vscode-java-pack",
+
+    // 调试支持
+    "vscjava.vscode-java-debug",
+
+    // Gradle 支持
+    "narrowtux-vm.gradle-validator-language-server",
+    "richardwillis.vscode-gradle",
+
+    // Kotlin 支持
+    "fwcd.kotlin",
+    "mathiasfrohlich.Kotlin",
+
+    // Android 相关
+    "adrianwilczynski.android",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-xml",
+
+    // 代码质量
+    "sonarsource.sonarlint-vscode",
+
+    // 通用工具
+    "eamodio.gitlens",
+    "pkief.material-icon-theme",
+    "alefragnani.bookmarks",
+    "usernamehw.errorlens"
+  ]
+}

@@ -1,0 +1,67 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Local configuration
+local.properties
+*.iml
+.idea/
+.DS_Store
+.vscode/local.env
+
+# Build output
+app/build/
+app/release/
+*.apk
+*.aab
+*.ap_
+
+# Android
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Kotlin
+*.kt.deps
+*.kotlin_module
+
+# Java
+*.class
+*.jar
+*.war
+
+# Log files
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Gradle cache
+.gradle/
+
+# Navigation component generated code
+navigation/
+
+# Freestyle
+freestyle/
+
+# Android Profiling
+*.hprof
+
+# Export files
+app/src/main/java/com/example/diaryapp/exports/
+app/exports/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Local environment
+.env
+.local.env

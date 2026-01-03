@@ -1,0 +1,62 @@
+{
+  // Java 配置
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "default": true
+    }
+  ],
+  "java.jdt.ls.java.home": "",
+
+  // Gradle 配置
+  "gradle.nestedProjects": false,
+  "gradle.autoDetect": "on",
+
+  // Kotlin 配置
+  "kotlin.languageServer.enabled": true,
+  "kotlin.compiler.jvmTarget": "17",
+  "[kotlin]": {
+    "editor.defaultFormatter": "fwcd.kotlin",
+    "editor.formatOnSave": true
+  },
+
+  // 编辑器配置
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "files.encoding": "utf8",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+
+  // 文件关联
+  "files.associations": {
+    "*.gradle": "gradle",
+    "*.gradle.kts": "kotlin"
+  },
+
+  // 排除文件
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/build": true,
+    "**/.gradle": true,
+    "**/local.properties": true
+  },
+
+  "search.exclude": {
+    "**/build": true,
+    "**/.gradle": true,
+    "**/captures": true
+  },
+
+  // Android 相关
+  "android.customSdkPath": "",
+
+  // 代码提示
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+
+  // 终端配置
+  "terminal.integrated.defaultProfile.windows": "PowerShell"
+}

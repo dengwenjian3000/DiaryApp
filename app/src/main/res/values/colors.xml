@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 温暖纸张质感配色 -->
+    <color name="paper_light">#FDF6E3</color>      <!-- 米白色 - 主背景 -->
+    <color name="paper_medium">#F5E6C8</color>     <!-- 浅米色 - 卡片背景 -->
+    <color name="paper_dark">#E8D4B8</color>       <!-- 深米色 - 边框/分隔 -->
+    <color name="ink_primary">#3E2723</color>      <!-- 深棕色 - 主文字 -->
+    <color name="ink_secondary">#6D4C41</color>    <!-- 中棕色 - 次要文字 -->
+    <color name="ink_light">#9C7864</color>        <!-- 浅棕色 - 辅助文字 -->
+    <color name="accent_warm">#D87C4A</color>      <!-- 暖橙色 - 强调色 -->
+    <color name="accent_soft">#E8B87D</color>      <!-- 柔和金 - 按钮 -->
+    <color name="accent_green">#7CB87C</color>     <!-- 温暖绿 - 成功/保存 -->
+    <color name="accent_red">#C75B5B</color>       <!-- 柔和红 - 删除/警告 -->
+    <color name="shadow_color">#4A3728</color>     <!-- 阴影色 -->
+</resources>
