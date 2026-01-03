@@ -25,6 +25,7 @@ import com.example.diaryapp.service.getWeekDisplayText
 import com.example.diaryapp.ui.components.DiaryCard
 import com.example.diaryapp.ui.components.MoodIndicator
 import com.example.diaryapp.ui.theme.*
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 
 /**
  * 每周总结屏幕

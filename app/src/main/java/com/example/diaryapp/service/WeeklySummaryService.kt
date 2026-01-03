@@ -334,13 +334,6 @@ class WeeklySummaryService {
     }
 
     /**
-     * 获取本周的显示文本
-     */
-    fun WeeklySummary.getWeekDisplayText(): String {
-        return "${year}年第${weekNumber}周"
-    }
-
-    /**
      * 检查是否应该重新生成总结
      */
     fun shouldRegenerate(lastGeneratedTime: LocalDateTime): Boolean {
@@ -356,4 +349,11 @@ class WeeklySummaryService {
 
         return false
     }
+}
+
+/**
+ * 获取本周的显示文本
+ */
+fun WeeklySummaryService.WeeklySummary.getWeekDisplayText(): String {
+    return "${year}年第${weekNumber}周"
 }

@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -536,6 +537,7 @@ private fun ThemeOption(
 /**
  * 添加标签对话框
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AddTagDialog(
     existingTags: List<String>,
