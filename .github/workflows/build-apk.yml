@@ -23,21 +23,11 @@ jobs:
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.2'
 
-    - name: Grant execute permission for gradlew
-      run: |
-        # Create gradle wrapper if not exists
-        if [ ! -f "gradlew" ]; then
-          gradle wrapper --gradle-version 8.2
-        fi
-        chmod +x gradlew
-
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon
-
-    - name: Sign APK (optional debug signing)
-      run: |
-        echo "APK built successfully"
+    - name: Build with Gradle
+      run: gradle assembleDebug --no-daemon --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
@@ -45,13 +35,3 @@ jobs:
         name: DiaryApp-debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
         retention-days: 30
-
-    - name: Release APK
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-      uses: softprops/action-gh-release@v1
-      with:
-        files: app/build/outputs/apk/debug/app-debug.apk
-        name: Debug APK
-        tag_name: debug-${{ github.sha }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
