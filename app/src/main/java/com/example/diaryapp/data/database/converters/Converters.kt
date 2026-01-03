@@ -27,11 +27,16 @@ class Converters {
     // String List 转换
     @TypeConverter
     fun fromStringList(list: List<String>?): String {
-        return gson.toJson(list)
+        return gson.toJson(list ?: emptyList<String>())
     }
 
     @TypeConverter
     fun toStringList(json: String?): List<String> {
-        return gson.fromJson(json, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+        if (json.isNullOrBlank()) return emptyList()
+        return try {
+            gson.fromJson(json, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 }

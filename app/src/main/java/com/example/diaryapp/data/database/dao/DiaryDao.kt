@@ -74,8 +74,8 @@ interface DiaryDao {
      */
     @Query("""
         SELECT * FROM diary_entries
-        WHERE :tag IN autoTags
-        OR :tag IN manualTags
+        WHERE autoTags LIKE '%' || :tag || '%'
+        OR manualTags LIKE '%' || :tag || '%'
         ORDER BY createdAt DESC
     """)
     fun getDiariesByTag(tag: String): Flow<List<DiaryEntry>>
