@@ -64,9 +64,11 @@ abstract class DiaryDatabase : RoomDatabase() {
     suspend fun initializeSystemThemes() {
         val themeDao = themeDao()
 
-        // 检查是否已经初始化
-        val existingCount = themeDao.getSystemThemes()
-        // 这里需要先收集一次来检查，实际使用时可以在ViewModel中处理
+        // 检查是否已经初始化（通过插入第一个主题来检查）
+        val existing = themeDao.getThemeById(1)
+        if (existing != null) {
+            return // 已经初始化过了
+        }
 
         // 系统预设主题
         val systemThemes = listOf(
