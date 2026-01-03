@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Videocam
@@ -58,6 +59,8 @@ fun EditorScreen(
     onRemoveImage: (Uri) -> Unit,
     onAddVideo: (Uri) -> Unit,
     onRemoveVideo: (Uri) -> Unit,
+    onGenerateTitle: () -> Unit,
+    onGetTitleSuggestions: () -> List<String>,
     onSave: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -66,6 +69,7 @@ fun EditorScreen(
     var showMoodSelector by remember { mutableStateOf(false) }
     var showThemeSelector by remember { mutableStateOf(false) }
     var showTagDialog by remember { mutableStateOf(false) }
+    var showTitleSuggestions by remember { mutableStateOf(false) }
 
     // 自动分析标签
     val analyzedTags = remember(title, content) {
@@ -145,6 +149,42 @@ fun EditorScreen(
                 onValueChange = onTitleChange,
                 placeholder = "标题"
             )
+
+            // AI 标题生成
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // 快速生成按钮
+                OutlinedButton(
+                    onClick = onGenerateTitle,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = AccentWarm
+                    ),
+                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                        brush = SolidColor(AccentWarm.copy(alpha = 0.5f))
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("AI生成标题", style = MaterialTheme.typography.bodySmall)
+                }
+
+                // 查看更多建议
+                OutlinedButton(
+                    onClick = { showTitleSuggestions = true },
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = InkSecondary
+                    )
+                ) {
+                    Text("更多建议", style = MaterialTheme.typography.bodySmall)
+                }
+            }
 
             // 主题选择
             ThemeSelector(
@@ -282,6 +322,61 @@ fun EditorScreen(
             onDismiss = { showTagDialog = false }
         )
     }
+
+    // 标题建议对话框
+    if (showTitleSuggestions) {
+        TitleSuggestionsDialog(
+            suggestions = onGetTitleSuggestions(),
+            onSuggestionClick = { suggestion ->
+                onTitleChange(suggestion)
+                showTitleSuggestions = false
+            },
+            onDismiss = { showTitleSuggestions = false }
+        )
+    }
+}
+
+/**
+ * 标题建议对话框
+ */
+@Composable
+private fun TitleSuggestionsDialog(
+    suggestions: List<String>,
+    onSuggestionClick: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("选择标题") },
+        text = {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(suggestions) { suggestion ->
+                    Card(
+                        onClick = { onSuggestionClick(suggestion) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = PaperMedium
+                        )
+                    ) {
+                        Text(
+                            text = suggestion,
+                            modifier = Modifier.padding(12.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = InkPrimary
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("关闭")
+            }
+        }
+    )
 }
 
 /**

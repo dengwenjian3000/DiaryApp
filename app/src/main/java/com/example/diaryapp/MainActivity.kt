@@ -194,6 +194,8 @@ fun DiaryApp(
                 onRemoveImage = { viewModel.removeImage(it) },
                 onAddVideo = { viewModel.addVideo(it) },
                 onRemoveVideo = { viewModel.removeVideo(it) },
+                onGenerateTitle = { viewModel.autoGenerateTitle() },
+                onGetTitleSuggestions = { viewModel.generateTitleSuggestions() },
                 onSave = {
                     viewModel.saveDiary()
                     navController.popBackStack()

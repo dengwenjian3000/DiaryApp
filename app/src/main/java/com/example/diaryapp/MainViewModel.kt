@@ -8,6 +8,7 @@ import com.example.diaryapp.data.database.entities.Theme
 import com.example.diaryapp.data.repository.DiaryRepository
 import com.example.diaryapp.service.FileStorageService
 import com.example.diaryapp.service.TagAnalyzerService
+import com.example.diaryapp.service.TitleGeneratorService
 import com.example.diaryapp.service.WeeklySummaryService
 import com.example.diaryapp.util.ExportUtil
 import com.example.diaryapp.util.ShareUtil
@@ -58,7 +59,8 @@ class MainViewModel(
     private val weeklySummaryService: WeeklySummaryService,
     private val exportUtil: ExportUtil,
     private val shareUtil: ShareUtil,
-    private val fileStorage: FileStorageService
+    private val fileStorage: FileStorageService,
+    private val titleGenerator: TitleGeneratorService = TitleGeneratorService()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DiaryUiState())
@@ -184,6 +186,29 @@ class MainViewModel(
     fun updateContent(content: String) {
         _uiState.update { it.copy(currentContent = content) }
         updateAutoTags()
+    }
+
+    /**
+     * 生成标题建议
+     */
+    fun generateTitleSuggestions(): List<String> {
+        val state = _uiState.value
+        return titleGenerator.generateTitleSuggestions(
+            state.currentContent,
+            state.currentAutoTags + state.currentManualTags
+        )
+    }
+
+    /**
+     * 自动生成标题
+     */
+    fun autoGenerateTitle() {
+        val state = _uiState.value
+        val generatedTitle = titleGenerator.generateTitle(
+            state.currentContent,
+            state.currentAutoTags + state.currentManualTags
+        )
+        updateTitle(generatedTitle)
     }
 
     /**
