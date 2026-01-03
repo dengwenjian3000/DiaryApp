@@ -87,7 +87,6 @@ dependencies {
     // ML Kit for on-device text analysis
     implementation("com.google.mlkit:language-id:17.0.4")
     implementation("com.google.mlkit:translate:17.0.1")
-    implementation("com.google.android.gms:play-services-mlkit-language-id:18.0.4")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
