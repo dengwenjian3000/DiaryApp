@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
@@ -41,8 +42,8 @@ enum class SearchType(val displayName: String) {
  */
 data class SearchFilter(
     val searchType: SearchType = SearchType.ALL,
-    selectedTags: Set<String> = emptySet(),
-    selectedThemeId: Long? = null
+    val selectedTags: Set<String> = emptySet(),
+    val selectedThemeId: Long? = null
 )
 
 /**
@@ -316,6 +317,7 @@ private fun SearchCategorySection(
 /**
  * 标签搜索区域
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SearchTagsSection(
     tags: List<String>,
@@ -431,6 +433,7 @@ private fun SearchThemesSection(
 /**
  * 筛选底部表单
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FilterBottomSheet(
     allTags: List<String>,

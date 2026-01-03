@@ -129,7 +129,7 @@ class TitleGeneratorService {
         }
 
         // 3. 基于心情
-        MOOD_KEYWORDS.values().take(3).forEach { title ->
+        MOOD_KEYWORDS.values.take(3).forEach { title ->
             if (!suggestions.contains(title)) {
                 suggestions.add(title)
             }
