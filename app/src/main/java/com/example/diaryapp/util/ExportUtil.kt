@@ -5,6 +5,7 @@ import android.graphics.*
 import android.net.Uri
 import androidx.compose.ui.graphics.toArgb
 import com.example.diaryapp.data.database.entities.DiaryEntry
+import com.example.diaryapp.service.WeeklySummaryService
 import com.example.diaryapp.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,6 +46,23 @@ class ExportUtil(private val context: Context) {
         try {
             val text = buildTextString(diaries)
             val file = saveToFile(fileName, text)
+            Result.success(Uri.fromFile(file))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * 导出每周总结为文本文件
+     */
+    suspend fun exportWeeklySummary(
+        summary: WeeklySummaryService.WeeklySummary,
+        fileName: String? = null
+    ): Result<Uri> = withContext(Dispatchers.IO) {
+        try {
+            val text = buildWeeklySummaryString(summary)
+            val actualFileName = fileName ?: "weekly_summary_${summary.year}_${summary.weekNumber}_${System.currentTimeMillis()}.txt"
+            val file = saveToFile(actualFileName, text)
             Result.success(Uri.fromFile(file))
         } catch (e: Exception) {
             Result.failure(e)
@@ -112,6 +130,69 @@ class ExportUtil(private val context: Context) {
             sb.append("内容：\n${diary.plainContent}\n")
             sb.append("====================================\n\n")
         }
+
+        return sb.toString()
+    }
+
+    /**
+     * 构建每周总结字符串
+     */
+    private fun buildWeeklySummaryString(summary: WeeklySummaryService.WeeklySummary): String {
+        val sb = StringBuilder()
+
+        // 标题
+        sb.append("====================================\n")
+        sb.append("           每 周 总 结\n")
+        sb.append("====================================\n")
+        sb.append("${summary.year}年 第${summary.weekNumber}周\n")
+        sb.append("${summary.weekStart.format(DateTimeFormatter.ofPattern("yyyy年M月d日"))} - ${summary.weekEnd.format(DateTimeFormatter.ofPattern("M月d日"))}\n\n")
+
+        // 统计概览
+        sb.append("【本周统计】\n")
+        sb.append("📝 日记篇数：${summary.totalEntries} 篇\n")
+        if (summary.topTags.isNotEmpty()) {
+            sb.append("🏷️  热门标签：")
+            sb.append(summary.topTags.take(3).joinToString("、") { "${it.tag}(${it.count})" })
+            sb.append("\n")
+        }
+        sb.append("\n")
+
+        // 心情分布
+        if (summary.moodDistribution.average != null) {
+            sb.append("【心情分布】\n")
+            sb.append("😊 平均心情：${String.format("%.1f", summary.moodDistribution.average)} 分\n")
+            summary.moodDistribution.distribution.forEach { (mood, count) ->
+                if (count > 0) {
+                    sb.append("${"★".repeat(mood)} $mood 分：$count 篇\n")
+                }
+            }
+            sb.append("\n")
+        }
+
+        // 精选日记
+        if (summary.featuredEntries.isNotEmpty()) {
+            sb.append("【精选日记】\n")
+            summary.featuredEntries.forEach { featured ->
+                val reason = when (featured.highlightReason) {
+                    WeeklySummaryService.HighlightReason.MOST_PHOTOS -> "📸 图片最多"
+                    WeeklySummaryService.HighlightReason.LONGEST_CONTENT -> "📝 内容最长"
+                    WeeklySummaryService.HighlightReason.HIGHLIGHTED -> "⭐ 精选"
+                    WeeklySummaryService.HighlightReason.MOST_TAGS -> "🏷️  标签最多"
+                    WeeklySummaryService.HighlightReason.MOOD_EXTREME -> "💭 心情强烈"
+                }
+                sb.append("$reason - ${featured.diary.title}\n")
+                sb.append("   ${featured.excerpt}\n\n")
+            }
+        }
+
+        // 文字总结
+        sb.append("【本周回顾】\n")
+        sb.append("${summary.summary}\n\n")
+
+        // 底部
+        sb.append("====================================\n")
+        sb.append("导出时间：${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}\n")
+        sb.append("来自 日记本\n")
 
         return sb.toString()
     }

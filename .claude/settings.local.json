@@ -13,7 +13,8 @@
       "Bash(git remote add:*)",
       "Bash(git remote set-url:*)",
       "Bash(gradlew.bat:*)",
-      "Bash(cmd /c \"cd /d G:\\\\GITHUB\\\\DiaryApp && gradlew.bat :app:compileDebugKotlin\")"
+      "Bash(cmd /c \"cd /d G:\\\\GITHUB\\\\DiaryApp && gradlew.bat :app:compileDebugKotlin\")",
+      "Bash(ls:*)"
     ]
   }
 }

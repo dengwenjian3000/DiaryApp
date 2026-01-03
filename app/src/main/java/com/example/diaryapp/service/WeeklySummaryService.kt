@@ -3,6 +3,8 @@ package com.example.diaryapp.service
 import com.example.diaryapp.data.database.entities.DiaryEntry
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.time.temporal.WeekFields
+import java.util.Locale
 
 /**
  * 每周总结生成服务
@@ -71,7 +73,7 @@ class WeeklySummaryService {
         }
 
         val (weekStart, weekEnd) = getCurrentWeekRange()
-        val year = weekStart.year
+        val year = getWeekBasedYear(weekStart)
         val weekNumber = getWeekNumber(weekStart)
 
         // 统计标签频率
@@ -106,22 +108,40 @@ class WeeklySummaryService {
 
     /**
      * 获取当前周的起止时间
+     * 使用ISO标准，周一为一周的开始
      */
     fun getCurrentWeekRange(): Pair<LocalDateTime, LocalDateTime> {
         val now = LocalDateTime.now()
-        val dayOfWeek = now.dayOfWeek.value
+        val weekFields = WeekFields.of(Locale.CHINA)
+        val dayOfWeek = now.get(weekFields.dayOfWeek()) // 1=Monday, 7=Sunday
+
+        // 计算本周一（week start）
         val weekStart = now.minusDays((dayOfWeek - 1).toLong()).toLocalDate().atStartOfDay()
-        val weekEnd = weekStart.plusDays(6).withHour(23).withMinute(59).withSecond(59)
+
+        // 计算本周日（week end）
+        val weekEnd = weekStart.plusDays(6)
+            .withHour(23)
+            .withMinute(59)
+            .withSecond(59)
+
         return Pair(weekStart, weekEnd)
     }
 
     /**
-     * 获取周数
+     * 获取ISO周数
+     * @return 返回Pair<周数, 年份>
      */
     private fun getWeekNumber(date: LocalDateTime): Int {
-        // 简化的周数计算
-        val dayOfYear = date.dayOfYear
-        return (dayOfYear / 7) + 1
+        val weekFields = WeekFields.of(Locale.CHINA)
+        return date.get(weekFields.weekOfWeekBasedYear())
+    }
+
+    /**
+     * 获取ISO周所在的年份
+     */
+    private fun getWeekBasedYear(date: LocalDateTime): Int {
+        val weekFields = WeekFields.of(Locale.CHINA)
+        return date.get(weekFields.weekBasedYear())
     }
 
     /**
@@ -323,7 +343,7 @@ class WeeklySummaryService {
         return WeeklySummary(
             weekStart = weekStart,
             weekEnd = weekEnd,
-            year = weekStart.year,
+            year = getWeekBasedYear(weekStart),
             weekNumber = getWeekNumber(weekStart),
             totalEntries = 0,
             featuredEntries = emptyList(),
@@ -343,8 +363,10 @@ class WeeklySummaryService {
         // 如果超过24小时，检查是否跨周
         if (hoursSinceLastUpdate >= 24) {
             val lastWeek = getWeekNumber(lastGeneratedTime)
+            val lastYear = getWeekBasedYear(lastGeneratedTime)
             val currentWeek = getWeekNumber(now)
-            return lastWeek != currentWeek
+            val currentYear = getWeekBasedYear(now)
+            return lastWeek != currentWeek || lastYear != currentYear
         }
 
         return false

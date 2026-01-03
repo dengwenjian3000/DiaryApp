@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diaryapp.data.database.DiaryDatabase
 import com.example.diaryapp.data.repository.DiaryRepository
+import com.example.diaryapp.service.FileStorageService
 import com.example.diaryapp.service.TagAnalyzerService
 import com.example.diaryapp.service.WeeklySummaryService
 import com.example.diaryapp.ui.screens.*
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var repository: DiaryRepository
     private lateinit var tagAnalyzer: TagAnalyzerService
     private lateinit var weeklySummaryService: WeeklySummaryService
+    private lateinit var fileStorageService: FileStorageService
 
     // 权限请求
     private val requestPermissionLauncher = registerForActivityResult(
@@ -49,6 +51,7 @@ class MainActivity : ComponentActivity() {
         repository = DiaryRepository(database.diaryDao(), database.themeDao())
         tagAnalyzer = TagAnalyzerService()
         weeklySummaryService = WeeklySummaryService()
+        fileStorageService = FileStorageService(applicationContext)
 
         // 初始化系统主题
         CoroutineScope(Dispatchers.IO).launch {
@@ -65,6 +68,7 @@ class MainActivity : ComponentActivity() {
                         repository = repository,
                         tagAnalyzer = tagAnalyzer,
                         weeklySummaryService = weeklySummaryService,
+                        fileStorageService = fileStorageService,
                         exportUtil = ExportUtil(applicationContext),
                         shareUtil = ShareUtil(applicationContext)
                     )
@@ -82,6 +86,7 @@ fun DiaryApp(
     repository: DiaryRepository,
     tagAnalyzer: TagAnalyzerService,
     weeklySummaryService: WeeklySummaryService,
+    fileStorageService: FileStorageService,
     exportUtil: ExportUtil,
     shareUtil: ShareUtil
 ) {
@@ -92,7 +97,8 @@ fun DiaryApp(
             tagAnalyzer,
             weeklySummaryService,
             exportUtil,
-            shareUtil
+            shareUtil,
+            fileStorageService
         )
     )
 

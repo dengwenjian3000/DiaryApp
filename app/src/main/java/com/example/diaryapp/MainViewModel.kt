@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.diaryapp.data.database.entities.DiaryEntry
 import com.example.diaryapp.data.database.entities.Theme
 import com.example.diaryapp.data.repository.DiaryRepository
+import com.example.diaryapp.service.FileStorageService
 import com.example.diaryapp.service.TagAnalyzerService
 import com.example.diaryapp.service.WeeklySummaryService
 import com.example.diaryapp.util.ExportUtil
@@ -56,7 +57,8 @@ class MainViewModel(
     private val tagAnalyzer: TagAnalyzerService,
     private val weeklySummaryService: WeeklySummaryService,
     private val exportUtil: ExportUtil,
-    private val shareUtil: ShareUtil
+    private val shareUtil: ShareUtil,
+    private val fileStorage: FileStorageService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DiaryUiState())
@@ -136,8 +138,12 @@ class MainViewModel(
                         },
                         currentAutoTags = diary.autoTags,
                         currentManualTags = diary.manualTags,
-                        currentImages = diary.imagePaths.map { Uri.parse(it) },
-                        currentVideos = diary.videoPaths.map { Uri.parse(it) }
+                        currentImages = diary.imagePaths.map { filePath ->
+                            fileStorage.getFileUri(filePath)
+                        },
+                        currentVideos = diary.videoPaths.map { filePath ->
+                            fileStorage.getFileUri(filePath)
+                        }
                     )
                 }
             }
@@ -269,6 +275,22 @@ class MainViewModel(
                 return@launch
             }
 
+            // 如果是编辑模式，获取旧的文件路径以便清理
+            val oldImagePaths = if (state.isEditing && state.currentDiaryId != null) {
+                repository.getDiaryById(state.currentDiaryId!!)?.imagePaths ?: emptyList()
+            } else {
+                emptyList()
+            }
+            val oldVideoPaths = if (state.isEditing && state.currentDiaryId != null) {
+                repository.getDiaryById(state.currentDiaryId!!)?.videoPaths ?: emptyList()
+            } else {
+                emptyList()
+            }
+
+            // 保存图片和视频到本地存储
+            val imagePaths = fileStorage.saveImages(state.currentImages)
+            val videoPaths = fileStorage.saveVideos(state.currentVideos)
+
             // 生成自动标签
             val autoTags = tagAnalyzer.analyzeTags(
                 state.currentTitle,
@@ -290,14 +312,18 @@ class MainViewModel(
                 updatedAt = now,
                 themeId = state.currentTheme?.id,
                 mood = state.currentMood,
-                imagePaths = state.currentImages.map { it.toString() },
-                videoPaths = state.currentVideos.map { it.toString() },
+                imagePaths = imagePaths,
+                videoPaths = videoPaths,
                 autoTags = autoTags,
                 manualTags = state.currentManualTags
             )
 
             if (state.isEditing && state.currentDiaryId != null) {
                 repository.updateDiary(diary)
+                // 清理旧的图片和视频文件
+                val imagesToDelete = oldImagePaths.filter { it !in imagePaths }
+                val videosToDelete = oldVideoPaths.filter { it !in videoPaths }
+                fileStorage.deleteFiles(imagesToDelete + videosToDelete)
             } else {
                 repository.createDiary(diary)
             }
@@ -312,6 +338,8 @@ class MainViewModel(
      */
     fun deleteDiary(diary: DiaryEntry) {
         viewModelScope.launch {
+            // 清理关联的图片和视频文件
+            fileStorage.deleteFiles(diary.imagePaths + diary.videoPaths)
             repository.deleteDiary(diary)
         }
     }
@@ -347,7 +375,15 @@ class MainViewModel(
     fun exportWeeklySummary() {
         viewModelScope.launch {
             val summary = _uiState.value.weeklySummary ?: return@launch
-            // 实现导出逻辑
+            exportUtil.exportWeeklySummary(summary)
+                .onSuccess { uri ->
+                    // 导出成功，可以使用 ShareUtil 分享文件
+                    shareUtil.shareFile(uri, "text/plain", "分享每周总结")
+                }
+                .onFailure { e ->
+                    e.printStackTrace()
+                    _uiState.update { it.copy(errorMessage = "导出失败: ${e.message}") }
+                }
         }
     }
 
@@ -357,7 +393,14 @@ class MainViewModel(
     fun shareWeeklySummary() {
         viewModelScope.launch {
             val summary = _uiState.value.weeklySummary ?: return@launch
-            shareUtil.shareText(summary.summary, "每周总结")
+            // 构建分享文本
+            val shareText = buildString {
+                append("${summary.year}年 第${summary.weekNumber}周\n")
+                append("📝 ${summary.totalEntries} 篇日记\n\n")
+                append(summary.summary)
+                append("\n\n来自 日记本")
+            }
+            shareUtil.shareText(shareText, "每周总结")
         }
     }
 
@@ -395,7 +438,8 @@ class MainViewModelFactory(
     private val tagAnalyzer: TagAnalyzerService,
     private val weeklySummaryService: WeeklySummaryService,
     private val exportUtil: ExportUtil,
-    private val shareUtil: ShareUtil
+    private val shareUtil: ShareUtil,
+    private val fileStorage: FileStorageService
 ) : androidx.lifecycle.ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -405,7 +449,8 @@ class MainViewModelFactory(
                 tagAnalyzer,
                 weeklySummaryService,
                 exportUtil,
-                shareUtil
+                shareUtil,
+                fileStorage
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
