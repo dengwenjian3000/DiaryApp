@@ -27,6 +27,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
+ * 获取所有标签（从日记列表中提取）
+ */
+fun getAllTagsFromDiaries(diaries: List<com.example.diaryapp.data.database.entities.DiaryEntry>): List<String> {
+    return diaries
+        .flatMap { it.autoTags + it.manualTags }
+        .distinct()
+        .sorted()
+}
+
+/**
  * 主Activity
  */
 class MainActivity : ComponentActivity() {
@@ -146,8 +156,13 @@ fun DiaryApp(
         composable("search") {
             SearchScreen(
                 searchResults = uiState.searchResults,
+                allTags = getAllTagsFromDiaries(uiState.diaries),
+                allThemes = uiState.themes,
                 searchQuery = uiState.searchQuery,
                 onSearchQueryChange = { viewModel.updateSearchQuery(it) },
+                onSearch = { query, filter ->
+                    viewModel.updateSearchQuery(query)
+                },
                 onDiaryClick = { diaryId ->
                     viewModel.selectDiary(diaryId)
                     navController.navigate("editor")
