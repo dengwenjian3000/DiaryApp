@@ -131,7 +131,7 @@ fun DiaryApp(
                     navController.navigate("themes")
                 },
                 onSettingsClick = {
-                    // TODO: 设置页面
+                    navController.navigate("settings")
                 },
                 onDeleteDiary = { diary ->
                     viewModel.deleteDiary(diary)
@@ -219,6 +219,25 @@ fun DiaryApp(
                     viewModel.deleteTheme(theme)
                 },
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // 设置页
+        composable("settings") {
+            SettingsScreen(
+                onBackClick = { navController.popBackStack() },
+                onBackupClick = {
+                    // TODO: 实现备份功能
+                },
+                onRestoreClick = {
+                    // TODO: 实现恢复功能
+                },
+                onClearCacheClick = {
+                    // TODO: 实现清除缓存功能
+                },
+                onAboutClick = {
+                    // TODO: 实现关于页面
+                }
             )
         }
     }
