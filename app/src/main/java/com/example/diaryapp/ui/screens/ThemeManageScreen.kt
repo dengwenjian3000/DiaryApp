@@ -127,7 +127,7 @@ fun ThemeManageScreen(
                     ThemeCard(
                         theme = theme,
                         canDelete = true,
-                        onDelete = { themeToDelete = it },
+                        onDelete = { themeToDelete = theme },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

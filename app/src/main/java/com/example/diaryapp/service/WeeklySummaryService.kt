@@ -336,8 +336,8 @@ class WeeklySummaryService {
     /**
      * 获取本周的显示文本
      */
-    fun getWeekDisplayText(summary: WeeklySummary): String {
-        return "${summary.year}年第${summary.weekNumber}周"
+    fun WeeklySummary.getWeekDisplayText(): String {
+        return "${year}年第${weekNumber}周"
     }
 
     /**

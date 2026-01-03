@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.diaryapp.service.WeeklySummaryService
+import com.example.diaryapp.service.getWeekDisplayText
 import com.example.diaryapp.ui.components.DiaryCard
+import com.example.diaryapp.ui.components.MoodIndicator
 import com.example.diaryapp.ui.theme.*
 
 /**

@@ -6,10 +6,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.diaryapp.data.database.entities.DiaryEntry
 import com.example.diaryapp.ui.components.*
@@ -88,7 +90,7 @@ fun SearchScreen(
                 searchResults.isEmpty() -> {
                     // 无结果
                     EmptyState(
-                        icon = androidx.compose.material.icons.Icons.Default.Search,
+                        icon = Icons.Default.Search,
                         title = "没有找到相关日记",
                         message = "试试其他关键词吧",
                         modifier = Modifier.align(Alignment.Center)

@@ -12,7 +12,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.VideoCamera
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -216,7 +219,7 @@ fun EditorScreen(
                     )
                 ) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Image,
+                        imageVector = Icons.Default.Image,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
@@ -232,7 +235,7 @@ fun EditorScreen(
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.VideoCamera,
+                        imageVector = Icons.Default.Videocam,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
@@ -423,7 +426,7 @@ private fun VideoPreviewRow(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.PlayArrow,
+                    imageVector = Icons.Default.PlayArrow,
                     contentDescription = "视频",
                     tint = InkSecondary,
                     modifier = Modifier.size(32.dp)
